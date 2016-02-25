@@ -1,0 +1,13 @@
+{
+  "name": "cdsrc/selenium-behat",
+  "description": "Behat dictionaries for selenium",
+  "require": {
+    "behat/behat": "*",
+    "behat/mink-extension": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "CDSRC\\Selenium\\Behat\\": "src/"
+    }
+  },
+}
