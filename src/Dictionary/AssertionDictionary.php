@@ -386,7 +386,7 @@ trait AssertionDictionary
      * @param string $type
      * @param string $accessName
      *
-     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from radio button group having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be selected$/
+     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from dropdown having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be selected$/
      */
     public function optionFromDropdownHavingTypeAndAccessNameShouldBeSelected($value, $attribute, $type, $accessName)
     {
@@ -401,7 +401,7 @@ trait AssertionDictionary
      * @param string $type
      * @param string $accessName
      *
-     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from radio button group having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be unselected$/
+     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from dropdown having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be unselected$/
      */
     public function optionFromDropdownGroupHavingTypeAndAccessNameShouldBeUnselected(
         $value,
