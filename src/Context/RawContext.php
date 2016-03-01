@@ -5,6 +5,7 @@
 
 namespace CDSRC\Selenium\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Mink\Mink;
 use Behat\Mink\Session;
 use CDSRC\Selenium\Behat\Assert\WebAssert;
@@ -17,6 +18,7 @@ use CDSRC\Selenium\Behat\Assert\WebAssert;
  */
 trait RawContext
 {
+
     /**
      * @var Mink
      */
@@ -26,6 +28,11 @@ trait RawContext
      * @var array
      */
     protected $minkParameters;
+
+    /**
+     * @var string
+     */
+    private $javascriptSourcesDirectory = __DIR__ . '/../Resources/JavaScript/';
 
     /**
      * Returns Mink instance.
@@ -113,7 +120,7 @@ trait RawContext
     /**
      * Returns Mink session assertion tool.
      *
-     * @param Session|string|null $name name of the session OR active session will be used
+     * @param Session|string|null $session name of the session OR active session will be used
      *
      * @return WebAssert
      */
@@ -127,11 +134,104 @@ trait RawContext
     }
 
     /**
+     * Load javascript requirement
+     *
+     * @param BeforeStepScope $scope
+     *
+     * @BeforeStep
+     */
+    public function loadJavascriptRequirement(BeforeStepScope $scope)
+    {
+        $this->loadJavascriptCodeFromFile($this->javascriptSourcesDirectory . 'core.js');
+        $this->loadJavascriptCodeFromFile($this->javascriptSourcesDirectory . 'context.js');
+    }
+
+    /**
      * Get page title
      *
      * @return string
      */
-    protected function getPageTitle(){
-        return $this->getSession()->getPage()->find('title')->getText();
+    protected function getPageTitle()
+    {
+        return trim(strip_tags($this->getSession()->getPage()->find('xpath', '/head/title')->getHtml()));
+    }
+
+    /**
+     * Close current window
+     *
+     */
+    protected function closeCurrentWindow()
+    {
+        $this->getSession()->executeScript('window.close();');
+    }
+
+    /**
+     * Scroll to element in page
+     *
+     * @param string $selector
+     * @param string|array $locator
+     */
+    protected function scrollToElement($selector, $locator)
+    {
+        $this->convertSelectorAndLocator($selector, $locator);
+        $element = $this->getSession()->getPage()->find($selector, $locator);
+        if ($element && $element->isValid()) {
+            $this->getSession()->executeScript(sprintf(
+                'window.sBehat.context.scrollToElementByXpath("%s", false);',
+                $element->getXpath()
+            ));
+        }
+    }
+
+    /**
+     * Convert specific selector to named
+     *
+     * @param string $selector
+     * @param string|array $locator
+     *
+     * TODO: Should be replaced by Custom Selector
+     * @see http://mink.behat.org/en/latest/guides/traversing-pages.html#custom-selector
+     */
+    protected function convertSelectorAndLocator(&$selector, &$locator){
+        if($selector === 'id'){
+            $selector = 'named';
+            $locator = array('id' => $locator);
+        }elseif($selector === 'class'){
+            $selector = 'named';
+            $locator = array('class' => $locator);
+        }
+    }
+
+    /**
+     * Scroll to element in page
+     *
+     * @param string $selector
+     * @param string|array $locator
+     *
+     * @return bool
+     */
+    protected function isElementVisibleForUser($selector, $locator)
+    {
+        $this->convertSelectorAndLocator($selector, $locator);
+        $element = $this->getSession()->getPage()->find($selector, $locator);
+        if ($element && $element->isValid()) {
+            return (bool) $this->getSession()->evaluateScript(sprintf(
+                'return window.sBehat.getVisibleElementByXpath("%s");',
+                $element->getXpath()
+            ));
+        }
+        return false;
+    }
+
+    /**
+     * Load javascript from file
+     *
+     * @param string $filename
+     */
+    private function loadJavascriptCodeFromFile($filename)
+    {
+        if (file_exists($filename)) {
+            $this->getSession()->executeScript(file_get_contents($filename));
+        }
     }
 }

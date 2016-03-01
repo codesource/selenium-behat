@@ -15,5 +15,4 @@ use Behat\MinkExtension\Context\MinkAwareContext;
 class Context implements SnippetAcceptingContext, MinkAwareContext
 {
     use RawContext;
-
 }

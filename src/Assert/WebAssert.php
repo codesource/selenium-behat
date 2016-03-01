@@ -5,12 +5,14 @@
 
 namespace CDSRC\Selenium\Behat\Assert;
 
+use Behat\Mink\Exception\ElementTextException;
 use \Behat\Mink\WebAssert as BaseWebAssert;
+use CDSRC\Selenium\Behat\Exception\WindowException;
 
 class WebAssert extends BaseWebAssert
 {
     /**
-     * Checks that specific element contains text.
+     * Checks that specific element text is equal to given text.
      *
      * @param string       $selectorType element selector type (css, xpath)
      * @param string|array $selector     element selector
@@ -22,21 +24,24 @@ class WebAssert extends BaseWebAssert
     {
         $element = $this->elementExists($selectorType, $selector);
         $actual = $element->getText();
-        $regex = '/'.preg_quote($text, '/').'/ui';
-
-        $message = sprintf(
-            'The text "%s" was not equals to the text of the %s.',
-            $text,
-            $this->getMatchingElementRepresentation($selectorType, $selector)
-        );
+        if(strlen($actual) === 0){
+            $actual = trim(strip_tags($element->getHtml()));
+        }
 
         if ($actual !== $text) {
+            $message = sprintf(
+                'The text "%s" was not equals to the text of the %s "%s".',
+                $text,
+                $this->getMatchingElementRepresentation($selectorType, $selector),
+                $actual
+            );
+
             throw new ElementTextException($message, $this->session->getDriver(), $element);
         }
     }
 
     /**
-     * Checks that specific element does not contains text.
+     * Checks that specific element text is not equal to given text.
      *
      * @param string       $selectorType element selector type (css, xpath)
      * @param string|array $selector     element selector
@@ -48,15 +53,35 @@ class WebAssert extends BaseWebAssert
     {
         $element = $this->elementExists($selectorType, $selector);
         $actual = $element->getText();
-
-        $message = sprintf(
-            'The text "%s" was not equals to the text of the %s, but it should not.',
-            $text,
-            $this->getMatchingElementRepresentation($selectorType, $selector)
-        );
+        if(strlen($actual) === 0){
+            $actual = trim(strip_tags($element->getHtml()));
+        }
 
         if ($actual === $text) {
+            $message = sprintf(
+                'The text "%s" was not equals to the text of the %s, but it should not.',
+                $text,
+                $this->getMatchingElementRepresentation($selectorType, $selector)
+            );
+
             throw new ElementTextException($message, $this->session->getDriver(), $element);
+        }
+    }
+
+    /**
+     * Check that window with given name exists
+     *
+     * @param $name
+     *
+     * @throws WindowException
+     */
+    public function windowExists($name = null){
+        if(empty($name) || !in_array($name, $this->session->getWindowNames(), true)){
+            $message = empty($name) ? 'The window do not exists.' : sprintf(
+                'The window "%s" do not exists.',
+                $name
+            );
+            throw new WindowException($message, $this->session->getDriver());
         }
     }
 
