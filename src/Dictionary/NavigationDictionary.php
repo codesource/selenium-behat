@@ -5,8 +5,34 @@
 
 namespace CDSRC\Selenium\Behat\Dictionary;
 
+use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Mink\Session;
+use CDSRC\Selenium\Behat\Assert\WebAssert;
+use CDSRC\Selenium\Behat\Exception\WindowException;
+
+/**
+ * MobileDictionary for selenium with Behat
+ *
+ * @method array getMinkParameters()
+ * @method void setMinkParameters(array $parameters)
+ * @method mixed getMinkParameter($name)
+ * @method void setMinkParameter($name, $value)
+ * @method Session getSession($name = null)
+ * @method WebAssert assertSession($session = null)
+ * @method string getPageTitle()
+ * @method void closeCurrentWindow()
+ * @method void scrollToElement($selector, $locator)
+ * @method void convertSelectorAndLocator(&$selector, &$locator)
+ */
 trait NavigationDictionary
 {
+
+    /**
+     * Stored previous window name
+     *
+     * @var string
+     */
+    protected $previousWindow = null;
 
     /**
      * Navigate to an url
@@ -17,6 +43,7 @@ trait NavigationDictionary
      */
     public function iNavigateTo($link)
     {
+        $this->getSession()->visit($this->getMinkParameter('base_url') . $link);
     }
 
     /**
@@ -26,7 +53,7 @@ trait NavigationDictionary
      */
     public function iNavigateForward()
     {
-
+        $this->getSession()->forward();
     }
 
     /**
@@ -36,7 +63,7 @@ trait NavigationDictionary
      */
     public function iNavigateBack()
     {
-
+        $this->getSession()->back();
     }
 
     /**
@@ -46,7 +73,11 @@ trait NavigationDictionary
      */
     public function iCloseTheBrowser()
     {
-
+        $session = $this->getSession();
+        foreach ($session->getWindowNames() as $name) {
+            $session->switchToWindow($name);
+            $this->closeCurrentWindow();
+        }
     }
 
     /**
@@ -59,7 +90,7 @@ trait NavigationDictionary
      */
     public function iResizeTheBrowserWindow($width, $height)
     {
-
+        $this->getSession()->resizeWindow($width, $height);
     }
 
     /**
@@ -69,7 +100,7 @@ trait NavigationDictionary
      */
     public function iMaximizeTheBrowserWindow()
     {
-
+        $this->getSession()->maximizeWindow();
     }
 
     /**
@@ -79,7 +110,7 @@ trait NavigationDictionary
      */
     public function iRefreshThePage()
     {
-
+        $this->getSession()->reload();
     }
 
     /**
@@ -89,7 +120,10 @@ trait NavigationDictionary
      */
     public function iSwitchToNewWindow()
     {
-
+        $session = $this->getSession();
+        $names = $session->getWindowNames();
+        $this->previousWindow = $session->getWindowName();
+        $session->switchToWindow(end($names));
     }
 
     /**
@@ -99,7 +133,8 @@ trait NavigationDictionary
      */
     public function iSwitchToPreviousWindow()
     {
-
+        $this->assertSession()->windowExists($this->previousWindow);
+        $this->getSession()->switchToWindow($this->previousWindow);
     }
 
     /**
@@ -109,7 +144,25 @@ trait NavigationDictionary
      */
     public function iSwitchToMainWindow()
     {
+        $session = $this->getSession();
+        $names = $session->getWindowNames();
+        $this->previousWindow = $session->getWindowName();
+        $session->switchToWindow(reset($names));
+    }
 
+    /**
+     * Switch to main window
+     *
+     * @param string $name
+     *
+     * @Then /^I switch to(?: the) window named "(?P<name>.*?)"$/
+     */
+    public function iSwitchToWindowNamed($name)
+    {
+        $this->assertSession()->windowExists($name);
+        $session = $this->getSession();
+        $this->previousWindow = $session->getWindowName();
+        $session->switchToWindow($name);
     }
 
     /**
@@ -118,10 +171,26 @@ trait NavigationDictionary
      * @param string $title
      *
      * @Then /^I switch to(?: the) window having title "(?P<title>.*?)"$/
+     *
+     * @throws WindowException
      */
     public function iSwitchToWindowHavingTitle($title)
     {
+        $session = $this->getSession();
+        $names = $session->getWindowNames();
+        $this->previousWindow = $session->getWindowName();
+        foreach ($names as $name) {
+            $session->switchToWindow($name);
+            if ($title === $this->getPageTitle()) {
+                return;
+            }
+        }
 
+        $message = sprintf(
+            'The window with title "%s" do not exists.',
+            $title
+        );
+        throw new WindowException($message, $this->getSession()->getDriver());
     }
 
     /**
@@ -131,7 +200,10 @@ trait NavigationDictionary
      */
     public function iCloseNewWindow()
     {
-
+        $session = $this->getSession();
+        $names = $session->getWindowNames();
+        $session->switchToWindow(end($names));
+        $this->closeCurrentWindow();
     }
 
     /**
@@ -141,7 +213,8 @@ trait NavigationDictionary
      */
     public function iSwitchToMainContent()
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -153,20 +226,22 @@ trait NavigationDictionary
      */
     public function iSwitchToFrame($frame)
     {
-
+        // TODO: Should we add an iframe assertion check?
+        $this->getSession()->switchToIFrame($frame);
     }
 
     /**
-     * Scroll to element having for given type this given access name
+     * Scroll to element having for given selector this given locator
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I scroll to element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)"$/
+     * @Then /^I scroll to element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)"$/
      */
-    public function iScrollToElementHaving($type, $accessName)
+    public function iScrollToElementHavingSelectorLocator($selector, $locator)
     {
-
+        $this->assertSession()->elementExists($selector, $locator);
+        $this->scrollToElement($selector, $locator);
     }
 
     /**
@@ -176,7 +251,8 @@ trait NavigationDictionary
      */
     public function iScrollToTopOfThePage()
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -186,20 +262,22 @@ trait NavigationDictionary
      */
     public function iScrollToEndOfThePage()
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Hover over element having for given type this given access name
+     * Hover over element having for given selector this given locator
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I hover over element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)"$/
+     * @Then /^I hover over element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)"$/
      */
-    public function iHoverOverElementHaving($type, $accessName)
+    public function iHoverOverElementHavingSelectorLocator($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -209,7 +287,8 @@ trait NavigationDictionary
      */
     public function iZoneInPage()
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -219,19 +298,21 @@ trait NavigationDictionary
      */
     public function iResetPageView()
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Zoom out page till element having for given type this given access name is visible
+     * Zoom out page till element having for given selector this given locator is visible
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I zoom out page till I see element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)"$/
+     * @Then /^I zoom out page till I see element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)"$/
      */
-    public function iZoomOutPageTillISeeElementHaving($type, $accessName)
+    public function iZoomOutPageTillISeeElementHavingSelectorLocator($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 }

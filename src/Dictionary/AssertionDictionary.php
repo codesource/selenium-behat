@@ -5,11 +5,25 @@
 
 namespace CDSRC\Selenium\Behat\Dictionary;
 
-use CDSRC\Selenium\Behat\Context\RawContext;
+use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Mink\Session;
+use CDSRC\Selenium\Behat\Assert\WebAssert;
 
+/**
+ * AssertionDictionary for selenium with Behat
+ *
+ * @method array getMinkParameters()
+ * @method void setMinkParameters(array $parameters)
+ * @method mixed getMinkParameter($name)
+ * @method void setMinkParameter($name, $value)
+ * @method Session getSession($name = null)
+ * @method WebAssert assertSession($session = null)
+ * @method string getPageTitle()
+ * @method void closeCurrentWindow()
+ * @method void convertSelectorAndLocator(&$selector, &$locator)
+ */
 trait AssertionDictionary
 {
-    use RawContext;
 
     /**
      * Should see page title as given title
@@ -20,7 +34,7 @@ trait AssertionDictionary
      */
     public function iShouldSeePageTitleAs($title)
     {
-        $this->assertSession()->elementTextEquals('xpath', 'html head title', '^' . $title . '$');
+        $this->assertSession()->elementTextEquals('xpath', '/head/title', $title);
     }
 
     /**
@@ -32,7 +46,7 @@ trait AssertionDictionary
      */
     public function iShouldNotSeePageTitleAs($title)
     {
-        $this->assertSession()->elementTextNotEquals('xpath', 'html head title', '^' . $title . '$');
+        $this->assertSession()->elementTextNotEquals('xpath', '/head/title', $title);
     }
 
     /**
@@ -44,7 +58,7 @@ trait AssertionDictionary
      */
     public function iShouldSeePageTitleHavingPartialTextAs($text)
     {
-        $this->assertSession()->elementTextContains('xpath', 'html head title', $text);
+        $this->assertSession()->elementTextContains('xpath', '/head/title', $text);
     }
 
     /**
@@ -56,266 +70,284 @@ trait AssertionDictionary
      */
     public function iShouldNotSeePageTitleHavingPartialTextAs($text)
     {
-        $this->assertSession()->elementTextNotContains('xpath', 'html head title', $text);
+        $this->assertSession()->elementTextNotContains('xpath', '/head/title', $text);
     }
 
     /**
-     * Element having for given type this given access name should have given text
+     * Element having for given selector this given locator should have given text
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param string $text
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should have text as "(?P<text>.*?)"$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have text as "(?P<text>.*?)"$/
      */
-    public function elementHavingTypeAndAccessNameShouldHaveTextAs($type, $accessName, $text)
+    public function elementHavingSelectorLocatorShouldHaveTextAs($selector, $locator, $text)
     {
-
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementTextEquals($selector, $locator, $text);
     }
 
     /**
-     * Element having for given type this given access name should not have given text
+     * Element having for given selector this given locator should not have given text
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param string $text
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should not have text as "(?P<text>.*?)"$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not have text as "(?P<text>.*?)"$/
      */
-    public function elementHavingTypeAndAccessNameShouldNotHaveTextAs($type, $accessName, $text)
+    public function elementHavingSelectorLocatorShouldNotHaveTextAs($selector, $locator, $text)
     {
-
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementTextNotEquals($selector, $locator, $text);
     }
 
     /**
-     * Element having for given type this given access name should have given partial text
+     * Element having for given selector this given locator should have given partial text
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param string $text
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should have partial text as "(?P<text>.*?)"$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have partial text as "(?P<text>.*?)"$/
      */
-    public function elementHavingTypeAndAccessNameShouldHavePartialTextAs($type, $accessName, $text)
+    public function elementHavingSelectorLocatorShouldHavePartialTextAs($selector, $locator, $text)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should not have given partial text
+     * Element having for given selector this given locator should not have given partial text
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param string $text
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should not have partial text as "(?P<text>.*?)"$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not have partial text as "(?P<text>.*?)"$/
      */
-    public function elementHavingTypeAndAccessNameShouldNotHavePartialTextAs($type, $accessName, $text)
+    public function elementHavingSelectorLocatorShouldNotHavePartialTextAs($selector, $locator, $text)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should have for given attribute this given value
+     * Element having for given selector this given locator should have for given attribute this given value
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param string $attribute
      * @param string $value
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should have attribute "(?P<attribute>.*?)" with value "(?P<value>.*?)"$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have attribute "(?P<attribute>.*?)" with value "(?P<value>.*?)"$/
      */
-    public function elementHavingTypeAndAccessNameShouldHaveAttributeWithValue($type, $accessName, $attribute, $value)
+    public function elementHavingSelectorLocatorShouldHaveAttributeWithValue($selector, $locator, $attribute, $value)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should not have for given attribute this given value
+     * Element having for given selector this given locator should not have for given attribute this given value
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param string $attribute
      * @param string $value
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should not have attribute "(?P<attribute>.*?)" with value "(?P<value>.*?)"$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not have attribute "(?P<attribute>.*?)" with value "(?P<value>.*?)"$/
      */
-    public function elementHavingTypeAndAccessNameShouldNotHaveAttributeWithValue(
-        $type,
-        $accessName,
+    public function elementHavingSelectorLocatorShouldNotHaveAttributeWithValue(
+        $selector,
+        $locator,
         $attribute,
         $value
     ) {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should be enabled
+     * Element having for given selector this given locator should be enabled
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be enabled$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be enabled$/
      */
-    public function elementHavingTypeAndAccessNameShouldBeEnabled($type, $accessName)
+    public function elementHavingSelectorLocatorShouldBeEnabled($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should not be enabled
+     * Element having for given selector this given locator should not be enabled
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should not be enabled$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not be enabled$/
      */
-    public function elementHavingTypeAndAccessNameShouldNotBeEnabled($type, $accessName)
+    public function elementHavingSelectorLocatorShouldNotBeEnabled($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should be disabled
+     * Element having for given selector this given locator should be disabled
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be disabled$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be disabled$/
      */
-    public function elementHavingTypeAndAccessNameShouldBeDisabled($type, $accessName)
+    public function elementHavingSelectorLocatorShouldBeDisabled($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should not be disabled
+     * Element having for given selector this given locator should not be disabled
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should not be disabled$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not be disabled$/
      */
-    public function elementHavingTypeAndAccessNameShouldNotBeDisabled($type, $accessName)
+    public function elementHavingSelectorLocatorShouldNotBeDisabled($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Element having for given type this given access name should be present
+     * Element having for given selector this given locator should be present
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be present$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be present$/
      */
-    public function elementHavingTypeAndAccessNameShouldBePresent($type, $accessName)
+    public function elementHavingSelectorLocatorShouldBePresent($selector, $locator)
     {
-
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
     }
 
     /**
-     * Element having for given type this given access name should not be present
+     * Element having for given selector this given locator should not be present
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:e|E)lement having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should not be present$/
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not be present$/
      */
-    public function elementHavingTypeAndAccessNameShouldNotBePresent($type, $accessName)
+    public function elementHavingSelectorLocatorShouldNotBePresent($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Checkbox having for given type this given access name should be checked
+     * Checkbox having for given selector this given locator should be checked
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:c|C)heckbox having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be checked$/
+     * @Then /^(?:c|C)heckbox having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be checked$/
      */
-    public function checkboxHavingTypeAndAccessNameShouldBeChecked($type, $accessName)
+    public function checkboxHavingSelectorLocatorShouldBeChecked($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
 
     /**
-     * Checkbox having for given type this given access name should be unchecked
+     * Checkbox having for given selector this given locator should be unchecked
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:c|C)heckbox having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be unchecked$/
+     * @Then /^(?:c|C)heckbox having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be unchecked$/
      */
-    public function checkboxHavingTypeAndAccessNameShouldBeUnchecked($type, $accessName)
+    public function checkboxHavingSelectorLocatorShouldBeUnchecked($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Radio button having for given type this given access name should be selected
+     * Radio button having for given selector this given locator should be selected
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:r|R)adio button having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be selected$/
+     * @Then /^(?:r|R)adio button having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be selected$/
      */
-    public function radioButtonHavingTypeAndAccessNameShouldBeSelected($type, $accessName)
+    public function radioButtonHavingSelectorLocatorShouldBeSelected($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Radio button having for given type this given access name should be unselected
+     * Radio button having for given selector this given locator should be unselected
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:r|R)adio button having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be unselected$/
+     * @Then /^(?:r|R)adio button having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be unselected$/
      */
-    public function radioButtonHavingTypeAndAccessNameShouldBeUnselected($type, $accessName)
+    public function radioButtonHavingSelectorLocatorShouldBeUnselected($selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Option from radio button group having for given type this given access name should be selected
+     * Option from radio button group having for given selector this given locator should be selected
      *
      * @param string $value
      * @param string $attribute
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from radio button group having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be selected$/
+     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from radio button group having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be selected$/
      */
-    public function optionFromRadioButtonGroupHavingTypeAndAccessNameShouldBeSelected(
+    public function optionFromRadioButtonGroupHavingSelectorLocatorShouldBeSelected(
         $value,
         $attribute,
-        $type,
-        $accessName
+        $selector,
+        $locator
     ) {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Option from radio button group having for given type this given access name should be unselected
+     * Option from radio button group having for given selector this given locator should be unselected
      *
      * @param string $value
      * @param string $attribute
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from radio button group having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be unselected$/
+     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from radio button group having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be unselected$/
      */
-    public function optionFromRadioButtonGroupHavingTypeAndAccessNameShouldBeUnselected(
+    public function optionFromRadioButtonGroupHavingSelectorLocatorShouldBeUnselected(
         $value,
         $attribute,
-        $type,
-        $accessName
+        $selector,
+        $locator
     ) {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -328,6 +360,8 @@ trait AssertionDictionary
     public function linkHavingTextShouldBePresent($text)
     {
 
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -340,6 +374,8 @@ trait AssertionDictionary
     public function linkHavingTextShouldNotBePresent($text)
     {
 
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -352,6 +388,8 @@ trait AssertionDictionary
     public function linkHavingPartialTextShouldBePresent($text)
     {
 
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -363,7 +401,8 @@ trait AssertionDictionary
      */
     public function linkHavingPartialTextShouldNotBePresent($text)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -375,41 +414,44 @@ trait AssertionDictionary
      */
     public function iShouldSeeAlertTextAs($text)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Option from dropdown having for given type this given access name should be selected
+     * Option from dropdown having for given selector this given locator should be selected
      *
      * @param string $value
      * @param string $attribute
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from dropdown having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be selected$/
+     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from dropdown having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be selected$/
      */
-    public function optionFromDropdownHavingTypeAndAccessNameShouldBeSelected($value, $attribute, $type, $accessName)
+    public function optionFromDropdownHavingSelectorLocatorShouldBeSelected($value, $attribute, $selector, $locator)
     {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Option from dropdown having for given type this given access name should be unselected
+     * Option from dropdown having for given selector this given locator should be unselected
      *
      * @param string $value
      * @param string $attribute
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from dropdown having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" should be unselected$/
+     * @Then /^(?:o|O)ption "(?P<value>.*?)" by (?P<attribute>text|value|index) from dropdown having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should be unselected$/
      */
-    public function optionFromDropdownGroupHavingTypeAndAccessNameShouldBeUnselected(
+    public function optionFromDropdownGroupHavingSelectorLocatorShouldBeUnselected(
         $value,
         $attribute,
-        $type,
-        $accessName
+        $selector,
+        $locator
     ) {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -418,14 +460,15 @@ trait AssertionDictionary
      * @param string $bType
      * @param string $bAccessName
      *
-     * @Then /^(?:a|A)ctual image having (?P<aType>id|class|css|name|xpath) "(?P<aAccessName>.*?)" and expected image having (?P<bType>id|class|css|name|xpath) "(?P<bAccessName>.*?)" should be similar$/
+     * @Then /^(?:a|A)ctual image having (?P<aType>id|class|css|named|xpath) "(?P<aAccessName>.*?)" and expected image having (?P<bType>id|class|css|named|xpath) "(?P<bAccessName>.*?)" should be similar$/
      */
-    public function actualImageHavingTypeAndAccessNameAndExpectedImageHavingTypeAndAccessNameSouldBeSimilar(
+    public function actualImageHavingSelectorLocatorAndExpectedImageHavingSelectorLocatorShouldBeSimilar(
         $aType,
         $aAccessName,
         $bType,
         $bAccessName
     ) {
-
+        // TODO: Implement this step
+        throw new PendingException();
     }
 }

@@ -5,21 +5,43 @@
 
 namespace CDSRC\Selenium\Behat\Dictionary;
 
+use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Mink\Session;
+use CDSRC\Selenium\Behat\Assert\WebAssert;
 
+/**
+ * MobileDictionary for selenium with Behat
+ *
+ * @method array getMinkParameters()
+ * @method void setMinkParameters(array $parameters)
+ * @method mixed getMinkParameter($name)
+ * @method void setMinkParameter($name, $value)
+ * @method Session getSession($name = null)
+ * @method WebAssert assertSession($session = null)
+ * @method string getPageTitle()
+ * @method void closeCurrentWindow()
+ * @method void convertSelectorAndLocator(&$selector, &$locator)
+ */
 trait MobileDictionary
 {
     /**
-     * Swipe from element having for given type this given access name to element
+     * Swipe from element having for given selector this given locator to element
      *
      * @param string $aType
      * @param string $aAccessName
      * @param string $bType
      * @param string $bAccessName
      *
-     * @Them /^I swipe from element having (?P<aType>id|class|css|name|xpath) "(?P<aAccessName>.*?)" to element having (?P<bType>id|class|css|name|xpath) "(?P<bAccessName>.*?)"$/
+     * @Them /^I swipe from element having (?P<aType>id|class|css|named|xpath) "(?P<aAccessName>.*?)" to element having (?P<bType>id|class|css|named|xpath) "(?P<bAccessName>.*?)"$/
      */
-    public function iSwipeFromElementHavingTypeAndAccessNameToElementHavingTypeAndAccessName($aType, $aAccessName, $bType, $bAccessName){
-
+    public function iSwipeFromElementHavingSelectorLocatorToElementHavingSelectorLocator(
+        $aType,
+        $aAccessName,
+        $bType,
+        $bAccessName
+    ) {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -32,8 +54,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe from co\-ordinates (?P<startX>\d+)(?:x|,)(?P<startY>\d+) to co\-ordinates (?P<endX>\d+)(?:x|,)(?P<endY>\d+)$/
      */
-    public function iSwipeFromCoordinatesToCoordinates($startX, $startY, $endX, $endY){
-
+    public function iSwipeFromCoordinatesToCoordinates($startX, $startY, $endX, $endY)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -41,8 +65,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe left$/
      */
-    public function iSwipeLeft(){
-
+    public function iSwipeLeft()
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -50,8 +76,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe right$/
      */
-    public function iSwipeRight(){
-
+    public function iSwipeRight()
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -59,8 +87,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe up$/
      */
-    public function iSwipeUp(){
-
+    public function iSwipeUp()
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -68,56 +98,66 @@ trait MobileDictionary
      *
      * @Then /^I swipe down$/
      */
-    public function iSwipeDown(){
-
+    public function iSwipeDown()
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Swipe element having for given type this given access name to left
+     * Swipe element having for given selector this given locator to left
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I swipe element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" to left$/
+     * @Then /^I swipe element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" to left$/
      */
-    public function iSwipeElementHavingTypeAndAccessNameToLeft($type, $accessName){
-
+    public function iSwipeElementHavingSelectorLocatorToLeft($selector, $locator)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Swipe element having for given type this given access name to right
+     * Swipe element having for given selector this given locator to right
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I swipe element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" to right$/
+     * @Then /^I swipe element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" to right$/
      */
-    public function iSwipeElementHavingTypeAndAccessNameToRight($type, $accessName){
-
+    public function iSwipeElementHavingSelectorLocatorToRight($selector, $locator)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Swipe element having for given type this given access name to up
+     * Swipe element having for given selector this given locator to up
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I swipe element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" to up$/
+     * @Then /^I swipe element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" to up$/
      */
-    public function iSwipeElementHavingTypeAndAccessNameToUp($type, $accessName){
-
+    public function iSwipeElementHavingSelectorLocatorToUp($selector, $locator)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Swipe element having for given type this given access name to down
+     * Swipe element having for given selector this given locator to down
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I swipe element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" to down$/
+     * @Then /^I swipe element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" to down$/
      */
-    public function iSwipeElementHavingTypeAndAccessNameToDown($type, $accessName){
-
+    public function iSwipeElementHavingSelectorLocatorToDown($selector, $locator)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -128,8 +168,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe(?: from) co\-ordinates (?P<x>\d+)(?:x|,)(?P<y>\d+) to left$/
      */
-    public function iSwipeFromCoordinatesToLeft($x, $y){
-
+    public function iSwipeFromCoordinatesToLeft($x, $y)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -140,8 +182,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe(?: from) co\-ordinates (?P<x>\d+)(?:x|,)(?P<y>\d+) to right$/
      */
-    public function iSwipeFromCoordinatesToRight($x, $y){
-
+    public function iSwipeFromCoordinatesToRight($x, $y)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -152,8 +196,10 @@ trait MobileDictionary
      *
      * @Then /^I swipe(?: from) co\-ordinates (?P<x>\d+)(?:x|,)(?P<y>\d+) to up$/
      */
-    public function iSwipeFromCoordinatesToUp($x, $y){
-
+    public function iSwipeFromCoordinatesToUp($x, $y)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -164,33 +210,39 @@ trait MobileDictionary
      *
      * @Then /^I swipe(?: from) co\-ordinates (?P<x>\d+)(?:x|,)(?P<y>\d+) to down$/
      */
-    public function iSwipeFromCoordinatesToDown($x, $y){
-
+    public function iSwipeFromCoordinatesToDown($x, $y)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Long tap on element having for given type this given access name
+     * Long tap on element having for given selector this given locator
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      *
-     * @Then /^I long (?:tap|press) on element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)"$/
+     * @Then /^I long (?:tap|press) on element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)"$/
      */
-    public function iLongTapOnElementHavingTypeAndAccessName($type, $accessName){
-
+    public function iLongTapOnElementHavingSelectorLocator($selector, $locator)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
-     * Tap x seconds on element having for given type this given access name for x seconds
+     * Tap x seconds on element having for given selector this given locator for x seconds
      *
-     * @param string $type
-     * @param string $accessName
+     * @param string $selector
+     * @param string $locator
      * @param float $seconds
      *
-     * @Then /^I long (?:tap|press) on element having (?P<type>id|class|css|name|xpath) "(?P<accessName>.*?)" for "(?P<seconds>.*?)" sec(?;onds?)$/
+     * @Then /^I long (?:tap|press) on element having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" for "(?P<seconds>.*?)" sec(?;onds?)$/
      */
-    public function iLongTapOnElementHavingTypeAndAccessNameForXSeconds($type, $accessName, $seconds){
-
+    public function iLongTapOnElementHavingSelectorLocatorForXSeconds($selector, $locator, $seconds)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -201,8 +253,10 @@ trait MobileDictionary
      *
      * @Then /^I long (?:tap|press) on co\-ordinates (?P<x>\d+)(?:x|,)(?P<y>\d+)$/
      */
-    public function iLongTapOnCoordinates($x, $y){
-
+    public function iLongTapOnCoordinates($x, $y)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -214,8 +268,10 @@ trait MobileDictionary
      *
      * @Then /^I long (?:tap|press) on co\-ordinates (?P<x>\d+)(?:x|,)(?P<y>\d+) for "(?P<seconds>.*?)" sec(?;onds?)$/
      */
-    public function iLongTapOnCoordinatesForXSeconds($x, $y, $seconds){
-
+    public function iLongTapOnCoordinatesForXSeconds($x, $y, $seconds)
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -223,8 +279,10 @@ trait MobileDictionary
      *
      * @Then /^I close app(?:lication)$/
      */
-    public function iCloseApp(){
-
+    public function iCloseApp()
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 
     /**
@@ -232,7 +290,9 @@ trait MobileDictionary
      *
      * @Then /^I (?:tap|press) on back button of device$/
      */
-    public function iTapOnBackButtonOfDevice(){
-
+    public function iTapOnBackButtonOfDevice()
+    {
+        // TODO: Implement this step
+        throw new PendingException();
     }
 }
