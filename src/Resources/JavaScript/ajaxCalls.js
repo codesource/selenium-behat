@@ -1,3 +1,5 @@
+// Make sure this is not loaded multiple time in same page
+if(window.sBehat === undefined || window.sBehat.ajaxCalls === undefined) {
     window.sBehat.ajaxCalls = new function () {
         var self = this,
             calls = [];
@@ -37,3 +39,4 @@
             return calls;
         }
     };
+}
