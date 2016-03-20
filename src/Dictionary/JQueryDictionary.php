@@ -24,6 +24,9 @@ use CDSRC\Selenium\Behat\Assert\WebAssert;
  */
 trait JQueryDictionary
 {
+
+    protected $jQueryAjaxCompleteObserved = false;
+
     /**
      * Wait for jQuery to be loaded (20 seconds)
      *
@@ -55,5 +58,72 @@ trait JQueryDictionary
             $message = sprintf('jQuery is not loaded or ajax call is still active after %s seconds', $seconds);
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
+    }
+
+    /**
+     * Wait for next Ajax call to be done using jQuery and check status code
+     *
+     * @param integer $statusCode
+     * @param float $seconds
+     *
+     * @Then /^I wait Ajax call to end(?: using jQuery)?(?: for (?P<seconds>\d+(?:\.\d+)?) sec(?:onds?)?)? and expect status code to be (?P<statusCode>\d+)$/
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function iWaitForAjaxStatusCodeUsingJqueryForXSeconds($statusCode, $seconds = 10.0)
+    {
+        $this->observeJQueryAjaxComplete();
+        $this->iWaitForAjaxUsingJqueryForXSeconds($seconds);
+        $ajaxStatusCode = (int)$this->getSession()->evaluateScript('return window.sBehat.ajaxCalls.shift().code;');
+
+        if ($ajaxStatusCode !== (int)$statusCode) {
+            $message = sprintf('Ajax call was expected "%s" status code and "%s" has been send by server', $statusCode,
+                $ajaxStatusCode);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * Wait for next Ajax call to be done using jQuery and check status code and text
+     *
+     * @param string $statusCode
+     * @param string $statusText
+     * @param float $seconds
+     *
+     * @Then /^I wait Ajax call to end(?: using jQuery)?(?: for (?P<seconds>\d+(?:\.\d+)?) sec(?:onds?)?)? and expect status code to be (?P<statusCode>\d+) and text to be "(?P<statusText>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function iWaitForAjaxStatusCodeAndTextUsingJqueryForXSeconds($statusCode, $statusText, $seconds = 10.0)
+    {
+        $this->observeJQueryAjaxComplete();
+        $this->iWaitForAjaxUsingJqueryForXSeconds($seconds);
+        $uniqueVariableName = uniqid('sBehatAjaxCall');
+        $this->getSession()->executeScript('window.' . $uniqueVariableName . ' = window.sBehat.ajaxCalls.shift()');
+        $ajaxStatusCode = (int)$this->getSession()->evaluateScript('return window.' . $uniqueVariableName . '.code;');
+        $ajaxStatusText = $this->getSession()->evaluateScript('return window.' . $uniqueVariableName . '.text;');
+
+        if ($ajaxStatusCode !== (int)$statusCode) {
+            $message = sprintf('Ajax call was expected "%s" status code and "%s" has been send by server', $statusCode,
+                $ajaxStatusCode);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+        if ($ajaxStatusText !== $statusText) {
+            $message = sprintf('Ajax call was expected "%s" status text and "%s" has been send by server', $statusText,
+                $ajaxStatusText);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    protected function observeJQueryAjaxComplete()
+    {
+        if (!$this->jQueryAjaxCompleteObserved) {
+            $this->getSession()->executeScript('
+                jQuery(document).ajaxComplete(function (event, xhr){
+                    window.sBehat.ajaxCalls.store(xhr.status, xhr.statusText);
+                });
+            ');
+        }
+        $this->jQueryAjaxCompleteObserved = true;
     }
 }

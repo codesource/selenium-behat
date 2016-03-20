@@ -144,6 +144,7 @@ trait RawContext
     {
         $this->loadJavascriptCodeFromFile($this->javascriptSourcesDirectory . 'core.js');
         $this->loadJavascriptCodeFromFile($this->javascriptSourcesDirectory . 'context.js');
+        $this->loadJavascriptCodeFromFile($this->javascriptSourcesDirectory . 'ajaxCalls.js');
     }
 
     /**
