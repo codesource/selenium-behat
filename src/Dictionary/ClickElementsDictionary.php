@@ -36,6 +36,7 @@ trait ClickElementsDictionary
     public function iClickOnElementHavingSelectorLocator($selector, $locator)
     {
         $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
         $this->getSession()->getPage()->find($selector, $locator)->click();
     }
 
