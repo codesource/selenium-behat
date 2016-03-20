@@ -195,10 +195,10 @@ trait RawContext
     protected function convertSelectorAndLocator(&$selector, &$locator){
         if($selector === 'id'){
             $selector = 'named';
-            $locator = array('id' => $locator);
+            $locator = array('id', $locator);
         }elseif($selector === 'class'){
             $selector = 'named';
-            $locator = array('class' => $locator);
+            $locator = array('class', $locator);
         }
     }
 
