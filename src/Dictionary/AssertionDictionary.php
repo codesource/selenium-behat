@@ -6,6 +6,7 @@
 namespace CDSRC\Selenium\Behat\Dictionary;
 
 use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Session;
 use CDSRC\Selenium\Behat\Assert\WebAssert;
 
@@ -71,6 +72,44 @@ trait AssertionDictionary
     public function iShouldNotSeePageTitleHavingPartialTextAs($text)
     {
         $this->assertSession()->elementTextNotContains('xpath', '/head/title', $text);
+    }
+
+    /**
+     * Window location should be equal to given value
+     *
+     * @param string $type
+     * @param string $value
+     *
+     * @Then /^I should be on (?P<type>href|pathname|protocol|hostname) "(?P<value>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function iShouldBeOnUrl($type, $value)
+    {
+        $currentValue = $this->getSession()->evaluateScript('return window.location.' . $type . ';');
+        if ($currentValue !== $value) {
+            $message = sprintf('Current window %s is "%s" and "%s" was expected', $type, $currentValue, $value);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * Window location attribute should not be equal to given value
+     *
+     * @param string $type
+     * @param string $value
+     *
+     * @Then /^I should not be on (?P<type>href|pathname|protocol|hostname) "(?P<value>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function iShouldNotBeOnUrl($type, $value)
+    {
+        $currentValue = $this->getSession()->evaluateScript('return window.location.' . $type . ';');
+        if ($currentValue === $value) {
+            $message = sprintf('Current window %s should not be equals to "%s"', $type, $currentValue);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
     }
 
     /**
@@ -249,8 +288,8 @@ trait AssertionDictionary
      */
     public function elementHavingSelectorLocatorShouldNotBePresent($selector, $locator)
     {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementNotExists($selector, $locator);
     }
 
     /**

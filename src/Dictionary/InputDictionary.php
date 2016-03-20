@@ -35,8 +35,9 @@ trait InputDictionary
      */
     public function iEnterTextIntoInputFieldHavingSelectorLocator($text, $selector, $locator)
     {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $this->getSession()->getPage()->find($selector, $locator)->setValue($text);
     }
 
     /**
