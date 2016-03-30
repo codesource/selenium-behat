@@ -5,6 +5,10 @@
     "behat/behat": "*",
     "behat/mink-extension": "*"
   },
+
+  "bugs": {
+    "url": "https://github.com/codesource/selenium-behat/issues"
+  },
   "autoload": {
     "psr-4": {
       "CDSRC\\Selenium\\Behat\\": "src/"
