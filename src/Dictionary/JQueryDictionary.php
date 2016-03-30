@@ -25,8 +25,6 @@ use CDSRC\Selenium\Behat\Assert\WebAssert;
 trait JQueryDictionary
 {
 
-    protected $jQueryAjaxCompleteObserved = false;
-
     /**
      * Wait for jQuery to be loaded (20 seconds)
      *
@@ -61,6 +59,15 @@ trait JQueryDictionary
     }
 
     /**
+     * Observe jQuery ajax calls
+     *
+     * @Then /^I observe jQuery ajax calls$/
+     */
+    public function iObserveJQueryAjaxCalls(){
+        $this->observeJQueryAjaxComplete();
+    }
+
+    /**
      * Wait for next Ajax call to be done using jQuery and check status code
      *
      * @param integer $statusCode
@@ -72,7 +79,6 @@ trait JQueryDictionary
      */
     public function iWaitForAjaxStatusCodeUsingJqueryForXSeconds($statusCode, $seconds = 10.0)
     {
-        $this->observeJQueryAjaxComplete();
         $this->iWaitForAjaxUsingJqueryForXSeconds($seconds);
         $ajaxStatusCode = (int)$this->getSession()->evaluateScript('return window.sBehat.ajaxCalls.shift().code;');
 
@@ -96,7 +102,6 @@ trait JQueryDictionary
      */
     public function iWaitForAjaxStatusCodeAndTextUsingJqueryForXSeconds($statusCode, $statusText, $seconds = 10.0)
     {
-        $this->observeJQueryAjaxComplete();
         $this->iWaitForAjaxUsingJqueryForXSeconds($seconds);
         $uniqueVariableName = uniqid('sBehatAjaxCall');
         $this->getSession()->executeScript('window.' . $uniqueVariableName . ' = window.sBehat.ajaxCalls.shift()');
@@ -117,13 +122,13 @@ trait JQueryDictionary
 
     protected function observeJQueryAjaxComplete()
     {
-        if (!$this->jQueryAjaxCompleteObserved) {
-            $this->getSession()->executeScript('
-                jQuery(document).ajaxComplete(function (event, xhr){
-                    window.sBehat.ajaxCalls.store(xhr.status, xhr.statusText);
-                });
-            ');
-        }
-        $this->jQueryAjaxCompleteObserved = true;
+        $this->getSession()->executeScript('
+            window.sBehat.ajaxCalls.reset();
+                console.log(window.sBehat.ajaxCalls.calls);
+            jQuery(document).ajaxComplete(function (event, xhr){
+                window.sBehat.ajaxCalls.store(xhr.status, xhr.statusText);
+                console.log(xhr);
+            });
+        ');
     }
 }

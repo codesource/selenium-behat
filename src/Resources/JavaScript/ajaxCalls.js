@@ -35,7 +35,19 @@ if(window.sBehat === undefined || window.sBehat.ajaxCalls === undefined) {
             return calls.length > 0 ? calls.shift() : {code: -1, text: ''};
         }
 
-        this.calls = function () {
+        /**
+         * Reset ajax calls queue
+         */
+        this.reset = function () {
+            calls = [];
+        }
+
+        /**
+         * Get current ajax calls queue
+         *
+         * @returns {Array}
+         */
+        this.calls = function(){
             return calls;
         }
     };
