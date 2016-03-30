@@ -181,11 +181,19 @@ trait AssertionDictionary
      * @param string $value
      *
      * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have attribute "(?P<attribute>.*?)" with value "(?P<value>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ElementNotFoundException
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
     public function elementHavingSelectorLocatorShouldHaveAttributeWithValue($selector, $locator, $attribute, $value)
     {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $currentValue = $this->getSession()->getPage()->find($selector, $locator)->getAttribute($attribute);
+        if ($currentValue !== $value) {
+            $message = sprintf('Expecting "%s" as value for given element\'s attribute "%s" and found "%s"', $value, $attribute, $currentValue);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
     }
 
     /**
@@ -197,6 +205,9 @@ trait AssertionDictionary
      * @param string $value
      *
      * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not have attribute "(?P<attribute>.*?)" with value "(?P<value>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ElementNotFoundException
+     * @throws \Behat\Mink\Exception\ExpectationException
      */
     public function elementHavingSelectorLocatorShouldNotHaveAttributeWithValue(
         $selector,
@@ -204,8 +215,107 @@ trait AssertionDictionary
         $attribute,
         $value
     ) {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $currentValue = $this->getSession()->getPage()->find($selector, $locator)->getAttribute($attribute);
+        if ($currentValue === $value) {
+            $message = sprintf('Given element\'s attribute "%s" should not be equal to "%s"', $attribute, $currentValue);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * Element having for given selector this given locator should have given attribute containing given value
+     *
+     * @param string $selector
+     * @param string $locator
+     * @param string $attribute
+     * @param string $value
+     *
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have attribute "(?P<attribute>.*?)" containing "(?P<value>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ElementNotFoundException
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function elementHavingSelectorLocatorShouldHaveAttributeContainingValue($selector, $locator, $attribute, $value)
+    {
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $currentValue = $this->getSession()->getPage()->find($selector, $locator)->getAttribute($attribute);
+        if (strstr($currentValue, $value) === false) {
+            $message = sprintf('Expecting that given element\'s attribute "%s" contains "%s" and his value is "%s"', $attribute, $value, $currentValue);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * Element having for given selector this given locator should have given attribute not containing given value
+     *
+     * @param string $selector
+     * @param string $locator
+     * @param string $attribute
+     * @param string $value
+     *
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have attribute "(?P<attribute>.*?)" not containing "(?P<value>.*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ElementNotFoundException
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function elementHavingSelectorLocatorShouldHaveAttributeNotContainingValue($selector, $locator, $attribute, $value)
+    {
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $currentValue = $this->getSession()->getPage()->find($selector, $locator)->getAttribute($attribute);
+        if (strstr($currentValue, $value) !== false) {
+            $message = sprintf('Expecting that given element\'s attribute "%s" do not contain "%s" and his value "%s" contains "%s"', $attribute, $value, $currentValue, $value);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * Element having for given selector this given locator should have attribute
+     *
+     * @param string $selector
+     * @param string $locator
+     * @param string $attribute
+     *
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should have attribute "(?P<attribute>[^"]*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ElementNotFoundException
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function elementHavingSelectorLocatorShouldHaveAttribute($selector, $locator, $attribute)
+    {
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $currentValue = $this->getSession()->getPage()->find($selector, $locator)->getAttribute($attribute);
+        if (strlen($currentValue) === 0) {
+            $message = sprintf('Expecting given element\'s attribute to be present', $attribute);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * Element having for given selector this given locator should not have attribute
+     *
+     * @param string $selector
+     * @param string $locator
+     * @param string $attribute
+     *
+     * @Then /^(?:e|E)lement having (?P<selector>id|class|css|named|xpath) "(?P<locator>.*?)" should not have attribute "(?P<attribute>[^"]*?)"$/
+     *
+     * @throws \Behat\Mink\Exception\ElementNotFoundException
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function elementHavingSelectorLocatorShouldNotHaveAttribute($selector, $locator, $attribute)
+    {
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $currentValue = $this->getSession()->getPage()->find($selector, $locator)->getAttribute($attribute);
+        if (strlen($currentValue) > 0) {
+            $message = sprintf('Expecting given element\'s attribute not to be present', $attribute);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
     }
 
     /**

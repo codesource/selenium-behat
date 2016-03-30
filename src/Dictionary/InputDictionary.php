@@ -109,8 +109,9 @@ trait InputDictionary
      */
     public function iCheckTheCheckboxHavingSelectorLocator($selector, $locator)
     {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $this->getSession()->getPage()->find($selector, $locator)->check();
     }
 
 
@@ -124,8 +125,9 @@ trait InputDictionary
      */
     public function iUncheckTheCheckboxHavingSelectorLocator($selector, $locator)
     {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $this->getSession()->getPage()->find($selector, $locator)->uncheck();
     }
 
 
@@ -139,8 +141,14 @@ trait InputDictionary
      */
     public function iToggleTheCheckboxHavingSelectorLocator($selector, $locator)
     {
-        // TODO: Implement this step
-        throw new PendingException();
+        $this->convertSelectorAndLocator($selector, $locator);
+        $this->assertSession()->elementExists($selector, $locator);
+        $checkbox = $this->getSession()->getPage()->find($selector, $locator);
+        if($checkbox->isChecked()){
+            $checkbox->uncheck();
+        }else{
+            $checkbox->check();
+        }
     }
 
     /**
