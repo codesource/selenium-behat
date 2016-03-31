@@ -80,4 +80,32 @@ trait ProgressDictionary
         // TODO: Implement this step
         throw new PendingException();
     }
+
+    /**
+     * Wait x seconds for window to close
+     *
+     * @param int $seconds
+     *
+     * @Then /^I wait (?P<seconds>\d+(?:\.\d+)?) seconds for window to close$/
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function iWaitXSecondsForWindowToClose($seconds)
+    {
+        //TODO: To be tested, it seems that sometime selenium loose connection before switching to new window
+        $currentWindowName = $this->getSession()->getWindowName();
+        $this->getSession()->switchToWindow();
+        $milliseconds = $seconds * 1000;
+        $step = 200;
+        while ($milliseconds > 0) {
+            if(!in_array($currentWindowName, $this->getSession()->getWindowNames())){
+                $this->getSession()->switchToWindow();
+                return;
+            }
+            $this->getSession()->wait($milliseconds > $step ? $step : $milliseconds);
+            $milliseconds -= $step;
+        }
+        $message = sprintf('After %s seconds current window is not closed.', $seconds);
+        throw new ExpectationException($message, $this->getSession()->getDriver());
+    }
 }
