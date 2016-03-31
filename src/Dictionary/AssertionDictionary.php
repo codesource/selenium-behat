@@ -620,4 +620,21 @@ trait AssertionDictionary
         // TODO: Implement this step
         throw new PendingException();
     }
+
+    /**
+     * Check number of window present
+     *
+     * @param int $quantity
+     *
+     * @Then /^I should have (?P<quantity>\d+) windows? present$/
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    public function iShouldHaveXWindowPresent($quantity){
+        $windowCount = count($this->getSession()->getWindowNames());
+        if($windowCount !== (int)$quantity){
+            $message = sprintf('Was expecting having %s window present and %s are present', $quantity, $windowCount);
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+    }
 }
