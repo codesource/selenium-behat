@@ -43,7 +43,11 @@ trait NavigationDictionary
      */
     public function iNavigateTo($link)
     {
-        $this->getSession()->visit($this->getMinkParameter('base_url') . $link);
+        if (preg_match('/^https?:\/\//', $link)) {
+            $this->getSession()->visit($link);
+        } else {
+            $this->getSession()->visit($this->getMinkParameter('base_url') . $link);
+        }
     }
 
     /**
