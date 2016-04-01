@@ -1,8 +1,7 @@
 // Make sure this is not loaded multiple time in same page
-if(window.sBehat === undefined || window.sBehat.ajaxCalls === undefined) {
+if (window.sBehat === undefined || window.sBehat.ajaxCalls === undefined) {
     window.sBehat.ajaxCalls = new function () {
-        var self = this,
-            calls = [];
+        var calls = [];
 
         /**
          * Store an ajax call
@@ -24,7 +23,7 @@ if(window.sBehat === undefined || window.sBehat.ajaxCalls === undefined) {
          */
         this.pop = function () {
             return calls.length > 0 ? calls.pop() : {code: -1, text: ''};
-        }
+        };
 
         /**
          * Pop an item from end of array
@@ -33,21 +32,21 @@ if(window.sBehat === undefined || window.sBehat.ajaxCalls === undefined) {
          */
         this.shift = function () {
             return calls.length > 0 ? calls.shift() : {code: -1, text: ''};
-        }
+        };
 
         /**
          * Reset ajax calls queue
          */
         this.reset = function () {
             calls = [];
-        }
+        };
 
         /**
          * Get current ajax calls queue
          *
          * @returns {Array}
          */
-        this.calls = function(){
+        this.calls = function () {
             return calls;
         }
     };

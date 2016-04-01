@@ -5,7 +5,6 @@
 
 namespace CDSRC\Selenium\Behat\Dictionary;
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Session;
 use CDSRC\Selenium\Behat\Assert\WebAssert;
 
